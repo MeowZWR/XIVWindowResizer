@@ -6,6 +6,8 @@ using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Game.ClientState.Keys;
+using Dalamud.Interface.Utility;
+using Dalamud.Plugin.Services;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 
@@ -28,6 +30,8 @@ public class ConfigWindow : Window
     private readonly Func<Size> _getCurrentSize;
     private readonly Func<Size> _getSavedSize;
     private readonly Action<Language> _onLanguageChanged;
+    private readonly IKeyState _keyState;
+    private readonly Dictionary<VirtualKey, bool> _captureState = new();
     private LocalizationStrings L => LocalizationManager.Strings;
 
     public ConfigWindow(
@@ -36,7 +40,7 @@ public class ConfigWindow : Window
         Func<Size> getCurrentSize,
         Func<Size> getSavedSize,
         Action<Language> onLanguageChanged,
-        Dalamud.Plugin.Services.IKeyState keyState)
+        IKeyState keyState)
         : base($"{LocalizationManager.Strings.SettingsTitle}###{WindowId}", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)
     {
         _configuration = configuration;
@@ -44,6 +48,7 @@ public class ConfigWindow : Window
         _getCurrentSize = getCurrentSize;
         _getSavedSize = getSavedSize;
         _onLanguageChanged = onLanguageChanged;
+        _keyState = keyState;
 
         SizeConstraints = new WindowSizeConstraints
         {
@@ -324,27 +329,7 @@ public class ConfigWindow : Window
             ImGui.PopID();
 
             ImGui.TableNextColumn();
-            string preview = binding.IsUnset ? L.Unset : binding.Key.ToString();
-            ImGui.SetNextItemWidth(-1);
-            ImGui.PushID($"key-{id}");
-            if(ImGui.BeginCombo("##key", preview))
-            {
-                foreach(var (label, key) in KeyOptions)
-                {
-                    bool selected = binding.Key == key;
-                    if(ImGui.Selectable(label, selected))
-                    {
-                        binding.Key = key;
-                        _saveConfiguration();
-                    }
-
-                    if(selected)
-                        ImGui.SetItemDefaultFocus();
-                }
-
-                ImGui.EndCombo();
-            }
-            ImGui.PopID();
+            DrawHotkeyInput(binding, id);
 
             ImGui.EndTable();
         }
@@ -370,6 +355,73 @@ public class ConfigWindow : Window
         ImGui.TextColored(new Vector4(0.7f, 0.8f, 1.0f, 1.0f), L.Status);
         ImGui.Text(string.Format(L.CurrentWindowSize, current.Width, current.Height));
         ImGui.Text(string.Format(L.StartupSize, saved.Width, saved.Height));
+    }
+
+    private void DrawHotkeyInput(HotkeyBinding binding, string id)
+    {
+        string preview = binding.IsUnset ? L.Unset : binding.Key.ToString();
+        ImGui.SetNextItemWidth(-1);
+        ImGui.PushID($"key-{id}");
+        ImGui.InputText("##key", ref preview, 32, ImGuiInputTextFlags.ReadOnly | ImGuiInputTextFlags.NoHorizontalScroll);
+
+        if(ImGui.IsItemActivated())
+            _captureState.Clear();
+
+        if(ImGui.IsItemActive())
+        {
+            if(TryCaptureKey(out var captured))
+            {
+                binding.Key = captured;
+                _saveConfiguration();
+            }
+
+            _keyState.ClearAll(); // prevent game input while capturing
+
+            if(ImGui.IsKeyPressed(ImGuiKey.Escape))
+            {
+                binding.Clear();
+                _saveConfiguration();
+            }
+        }
+
+        ImGui.PopID();
+    }
+
+    private bool TryCaptureKey(out VirtualKey keyPressed)
+    {
+        foreach(var key in _keyState.GetValidVirtualKeys().OrderBy(k => k.ToString()))
+        {
+            if(IsModifierKey(key))
+                continue;
+
+            bool isDown = _keyState.IsVirtualKeyValid(key) && _keyState[key];
+            bool wasDown = _captureState.TryGetValue(key, out bool prev) && prev;
+            _captureState[key] = isDown;
+
+            bool pressedNow = ImGui.IsKeyPressed(ImGuiHelpers.VirtualKeyToImGuiKey(key), false) || (isDown && !wasDown);
+
+            if(pressedNow)
+            {
+                keyPressed = key;
+                return true;
+            }
+        }
+
+        keyPressed = default;
+        return false;
+    }
+
+    private static bool IsModifierKey(VirtualKey key)
+    {
+        return key is VirtualKey.CONTROL
+            or VirtualKey.MENU
+            or VirtualKey.SHIFT
+            or VirtualKey.LCONTROL
+            or VirtualKey.RCONTROL
+            or VirtualKey.LMENU
+            or VirtualKey.RMENU
+            or VirtualKey.LSHIFT
+            or VirtualKey.RSHIFT;
     }
 }
 
