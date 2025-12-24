@@ -4,6 +4,8 @@
   "LanguageLabel": "语言",
   "LanguageTooltip": "选择显示语言",
   "ShowChatMessages": "执行后显示聊天消息",
+  "PassHotkeysToGame": "快捷键传递给游戏",
+  "PassHotkeysToGameTooltip": "关闭后，快捷键将被插件拦截，不会传递给游戏本体。",
   "CommandOverview": "指令概览",
   "CommandSetLabel": "/wresize set",
   "CommandSetTooltip": "将窗口调整到指定分辨率。\n示例：/wresize set 5120 2160",

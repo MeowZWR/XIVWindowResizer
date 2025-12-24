@@ -4,6 +4,8 @@
   "LanguageLabel": "Language",
   "LanguageTooltip": "Choose display language",
   "ShowChatMessages": "Show chat message after execution",
+  "PassHotkeysToGame": "Pass hotkeys to game",
+  "PassHotkeysToGameTooltip": "When disabled, hotkeys are consumed by the plugin and not sent to the game.",
   "CommandOverview": "Command overview",
   "CommandSetLabel": "/wresize set",
   "CommandSetTooltip": "Set window size to specified resolution.\nExample: /wresize set 5120 2160",

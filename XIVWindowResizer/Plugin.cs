@@ -171,6 +171,9 @@ public sealed class Plugin : IDalamudPlugin
             return;
 
         action();
+
+        if(!_configuration.PassHotkeysToGame)
+            BlockHotkey(binding);
     }
 
     private void SyncKeyStates()
@@ -249,6 +252,24 @@ public sealed class Plugin : IDalamudPlugin
     private Size GetSavedSize()
     {
         return new Size(_configuration.SavedWidth, _configuration.SavedHeight);
+    }
+
+    private void BlockHotkey(HotkeyBinding binding)
+    {
+        TryReleaseKey(binding.Key);
+    }
+
+    private void TryReleaseKey(VirtualKey key)
+    {
+        try
+        {
+            if(_keyState.IsVirtualKeyValid(key))
+                _keyState[key] = false;
+        }
+        catch
+        {
+            // ignored
+        }
     }
 
     private void Notify(string message)

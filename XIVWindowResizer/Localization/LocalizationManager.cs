@@ -18,6 +18,8 @@ public class LocalizationStrings
     public string LanguageLabel { get; set; } = "Language";
     public string LanguageTooltip { get; set; } = "Choose display language";
     public string ShowChatMessages { get; set; } = "Show chat message after execution";
+    public string PassHotkeysToGame { get; set; } = "Pass hotkeys to game";
+    public string PassHotkeysToGameTooltip { get; set; } = "When disabled, hotkeys are consumed by the plugin and not sent to the game.";
     public string CommandOverview { get; set; } = "Command overview";
     public string CommandSetLabel { get; set; } = "/wresize set";
     public string CommandSetTooltip { get; set; } = "Set window size to specified resolution.\nExample: /wresize set 5120 2160";
@@ -66,6 +68,8 @@ public class LocalizationStrings
             LanguageLabel = LanguageLabel,
             LanguageTooltip = LanguageTooltip,
             ShowChatMessages = ShowChatMessages,
+            PassHotkeysToGame = PassHotkeysToGame,
+            PassHotkeysToGameTooltip = PassHotkeysToGameTooltip,
             CommandOverview = CommandOverview,
             CommandSetLabel = CommandSetLabel,
             CommandSetTooltip = CommandSetTooltip,
@@ -185,6 +189,8 @@ public static class LocalizationManager
         result.LanguageLabel = Coalesce(result.LanguageLabel, overrides.LanguageLabel);
         result.LanguageTooltip = Coalesce(result.LanguageTooltip, overrides.LanguageTooltip);
         result.ShowChatMessages = Coalesce(result.ShowChatMessages, overrides.ShowChatMessages);
+        result.PassHotkeysToGame = Coalesce(result.PassHotkeysToGame, overrides.PassHotkeysToGame);
+        result.PassHotkeysToGameTooltip = Coalesce(result.PassHotkeysToGameTooltip, overrides.PassHotkeysToGameTooltip);
         result.CommandOverview = Coalesce(result.CommandOverview, overrides.CommandOverview);
         result.CommandSetLabel = Coalesce(result.CommandSetLabel, overrides.CommandSetLabel);
         result.CommandSetTooltip = Coalesce(result.CommandSetTooltip, overrides.CommandSetTooltip);

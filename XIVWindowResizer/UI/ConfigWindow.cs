@@ -82,6 +82,15 @@ public class ConfigWindow : Window
             _configuration.ShowChatMessages = showChat;
             _saveConfiguration();
         }
+
+        bool passHotkeys = _configuration.PassHotkeysToGame;
+        if(ImGui.Checkbox(L.PassHotkeysToGame, ref passHotkeys))
+        {
+            _configuration.PassHotkeysToGame = passHotkeys;
+            _saveConfiguration();
+        }
+        if(ImGui.IsItemHovered())
+            ImGui.SetTooltip(L.PassHotkeysToGameTooltip);
     }
 
     private void DrawLanguageCombo()
