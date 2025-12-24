@@ -29,14 +29,17 @@ public sealed class Plugin : IDalamudPlugin
     private WindowSizeHelper _windowSizeHelper { get; init; }
     private readonly WindowSystem _windowSystem;
     private readonly ConfigWindow _configWindow;
+    private readonly CommandInfo _commandInfo;
     private readonly Dictionary<VirtualKey, bool> _lastKeyState = new();
     private readonly List<HotkeyBinding> _hotkeyBindings;
     private Configuration _configuration;
+    private LocalizationStrings L => LocalizationManager.Strings;
 
     public Plugin()
     {
         _windowSizeHelper = new WindowSizeHelper(new WindowSearchHelper());
         _configuration = LoadConfiguration();
+        LocalizationManager.Initialize(_pluginInterface, _configuration.Language);
         EnsureSavedSize();
         _originalWindowSize = new Size(_configuration.SavedWidth, _configuration.SavedHeight);
 
@@ -54,6 +57,7 @@ public sealed class Plugin : IDalamudPlugin
             SaveConfiguration,
             GetCurrentWindowSizeSafe,
             GetSavedSize,
+            OnLanguageChanged,
             _keyState);
 
         _windowSystem.AddWindow(_configWindow);
@@ -63,10 +67,11 @@ public sealed class Plugin : IDalamudPlugin
         _pluginInterface.UiBuilder.OpenMainUi += OpenConfigUi;
         _framework.Update += OnFrameworkUpdate;
 
-        _commandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
+        _commandInfo = new CommandInfo(OnCommand)
         {
-            HelpMessage = "打开设置界面。\r\nUsage:\r\n/wresize set <width> <height> - Set window size.\r\n/wresize reset - Reset window size back to the original size.\r\n/wresize update - Update window size used by /wresize reset command. Use if you have changed game's screen resolution without restarting the game or reloading the plugin."
-        });
+            HelpMessage = L.HelpMessage
+        };
+        _commandManager.AddHandler(CommandName, _commandInfo);
     }
 
     public void Dispose()
@@ -100,7 +105,7 @@ public sealed class Plugin : IDalamudPlugin
                 UpdateSavedSize();
                 break;
             default:
-                PrintInChat($"Unknown command: {splitArgs[0]}");
+                PrintInChat(string.Format(L.UnknownCommand, splitArgs[0]));
                 break;
         }
     }
@@ -109,13 +114,13 @@ public sealed class Plugin : IDalamudPlugin
     {
         if(splitArgs.Length < 3)
         {
-            PrintInChat("Usage: /wresize set <width> <height>");
+            PrintInChat(L.UsageSet);
             return;
         }
 
         if(!int.TryParse(splitArgs[1], out int width) || !int.TryParse(splitArgs[2], out int height))
         {
-            PrintInChat("Invalid width or height");
+            PrintInChat(L.InvalidWidthHeight);
             return;
         }
 
@@ -189,7 +194,7 @@ public sealed class Plugin : IDalamudPlugin
 
     private bool ResetToSavedSize()
     {
-        return ApplyWindowSize(_configuration.SavedWidth, _configuration.SavedHeight, "Window size is reset to the saved startup size.");
+        return ApplyWindowSize(_configuration.SavedWidth, _configuration.SavedHeight, L.ResetToSavedSize);
     }
 
     private bool UpdateSavedSize()
@@ -202,12 +207,12 @@ public sealed class Plugin : IDalamudPlugin
             SaveConfiguration();
 
             _originalWindowSize = current;
-            Notify($"Updated saved window size to {current.Width}x{current.Height}");
+            Notify(string.Format(L.UpdatedSavedSize, current.Width, current.Height));
             return true;
         }
         catch(Exception ex)
         {
-            Notify($"Unable to update window size: {ex.Message}");
+            Notify(string.Format(L.UpdateFailed, ex.Message));
             return false;
         }
     }
@@ -216,19 +221,19 @@ public sealed class Plugin : IDalamudPlugin
     {
         if(width <= 0 || height <= 0)
         {
-            Notify("Invalid width or height");
+            Notify(L.InvalidWidthHeight);
             return false;
         }
 
         try
         {
             _windowSizeHelper.SetWindowSize(width, height);
-            Notify(successMessage ?? $"Window size is set to {width}x{height}");
+            Notify(successMessage ?? string.Format(L.SetWindowSizeSuccess, width, height));
             return true;
         }
         catch(Exception ex)
         {
-            Notify($"Unable to set window size: {ex.Message}");
+            Notify(string.Format(L.SetWindowSizeFailed, ex.Message));
             return false;
         }
     }
@@ -291,6 +296,12 @@ public sealed class Plugin : IDalamudPlugin
     private void SaveConfiguration()
     {
         _pluginInterface.SavePluginConfig(_configuration);
+    }
+
+    private void OnLanguageChanged(Language language)
+    {
+        LocalizationManager.SetLanguage(language);
+        _commandInfo.HelpMessage = L.HelpMessage;
     }
 }
 

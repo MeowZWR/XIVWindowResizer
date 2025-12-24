@@ -11,6 +11,7 @@ public class Configuration : IPluginConfiguration
 
     public bool EnableHotkeys { get; set; } = true;
     public bool ShowChatMessages { get; set; } = true;
+    public Language Language { get; set; } = Language.English;
 
     public ResolutionSelection PresetA { get; set; } = ResolutionSelection.Default4K();
     public ResolutionSelection PresetB { get; set; } = ResolutionSelection.Default4K();
@@ -75,7 +76,7 @@ public class HotkeyBinding
     public string ToDisplayString()
     {
         if(IsUnset)
-            return "未设置";
+            return LocalizationManager.Strings.Unset;
 
         string mods = string.Empty;
         if(Ctrl)

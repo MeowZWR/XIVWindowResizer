@@ -20,24 +20,30 @@ public class ConfigWindow : Window
         .OrderBy(k => k.ToString())
         .Select(k => (k.ToString(), k))
         .ToList();
+    private static readonly Language[] LanguageOptions = Enum.GetValues(typeof(Language)).Cast<Language>().ToArray();
+    private const string WindowId = "XIVWindowResizerConfig";
 
     private readonly Configuration _configuration;
     private readonly Action _saveConfiguration;
     private readonly Func<Size> _getCurrentSize;
     private readonly Func<Size> _getSavedSize;
+    private readonly Action<Language> _onLanguageChanged;
+    private LocalizationStrings L => LocalizationManager.Strings;
 
     public ConfigWindow(
         Configuration configuration,
         Action saveConfiguration,
         Func<Size> getCurrentSize,
         Func<Size> getSavedSize,
+        Action<Language> onLanguageChanged,
         Dalamud.Plugin.Services.IKeyState keyState)
-        : base("XIVWindowResizer 设置", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)
+        : base($"{LocalizationManager.Strings.SettingsTitle}###{WindowId}", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)
     {
         _configuration = configuration;
         _saveConfiguration = saveConfiguration;
         _getCurrentSize = getCurrentSize;
         _getSavedSize = getSavedSize;
+        _onLanguageChanged = onLanguageChanged;
 
         SizeConstraints = new WindowSizeConstraints
         {
@@ -48,6 +54,7 @@ public class ConfigWindow : Window
 
     public override void Draw()
     {
+        WindowName = $"{L.SettingsTitle}###{WindowId}";
         DrawToggles();
         ImGui.Separator();
         DrawCommandHelp();
@@ -62,37 +69,82 @@ public class ConfigWindow : Window
     private void DrawToggles()
     {
         bool enableHotkeys = _configuration.EnableHotkeys;
-        if(ImGui.Checkbox("Enable hotkeys", ref enableHotkeys))
+        if(ImGui.Checkbox(L.EnableHotkeys, ref enableHotkeys))
         {
             _configuration.EnableHotkeys = enableHotkeys;
             _saveConfiguration();
         }
 
+        ImGui.SameLine();
+        DrawLanguageCombo();
+
         bool showChat = _configuration.ShowChatMessages;
-        if(ImGui.Checkbox("Show chat message after execution", ref showChat))
+        if(ImGui.Checkbox(L.ShowChatMessages, ref showChat))
         {
             _configuration.ShowChatMessages = showChat;
             _saveConfiguration();
         }
     }
 
+    private void DrawLanguageCombo()
+    {
+        float comboWidth = 140f;
+        float labelWidth = ImGui.CalcTextSize(L.LanguageLabel).X;
+        float totalWidth = labelWidth + ImGui.GetStyle().ItemSpacing.X + comboWidth;
+        float startX = ImGui.GetContentRegionMax().X - totalWidth;
+        float currentLineY = ImGui.GetCursorPosY();
+
+        ImGui.SetCursorPosX(startX);
+        ImGui.SetCursorPosY(currentLineY);
+        ImGui.AlignTextToFramePadding();
+        ImGui.TextUnformatted(L.LanguageLabel);
+        if(ImGui.IsItemHovered())
+            ImGui.SetTooltip(L.LanguageTooltip);
+
+        ImGui.SameLine();
+        ImGui.SetNextItemWidth(comboWidth);
+        Language language = _configuration.Language;
+        string preview = LocalizationManager.GetLanguageName(language);
+        if(ImGui.BeginCombo("##language", preview))
+        {
+            foreach(var option in LanguageOptions)
+            {
+                bool selected = language == option;
+                string label = LocalizationManager.GetLanguageName(option);
+                if(ImGui.Selectable(label, selected))
+                {
+                    _configuration.Language = option;
+                    _onLanguageChanged(option);
+                    _saveConfiguration();
+                }
+
+                if(selected)
+                    ImGui.SetItemDefaultFocus();
+            }
+
+            ImGui.EndCombo();
+        }
+        if(ImGui.IsItemHovered())
+            ImGui.SetTooltip(L.LanguageTooltip);
+    }
+
     private void DrawCommandHelp()
     {
-        ImGui.TextColored(new Vector4(0.7f, 0.8f, 1.0f, 1.0f), "Command overview");
+        ImGui.TextColored(new Vector4(0.7f, 0.8f, 1.0f, 1.0f), L.CommandOverview);
 
-        DrawCommandChip("/wresize set", "Set window size to specified resolution.\nExample: /wresize set 5120 2160");
+        DrawCommandChip(L.CommandSetLabel, L.CommandSetTooltip);
         ImGui.SameLine(0, 20f);
-        DrawCommandChip("/wresize reset", "Reset window size to startup size.\nThe size saved by the plugin when it was loaded or the last time the update command was used.");
+        DrawCommandChip(L.CommandResetLabel, L.CommandResetTooltip);
         ImGui.SameLine(0, 20f);
-        DrawCommandChip("/wresize update", "Record current window size as new startup size.\nUse this command with caution.");
+        DrawCommandChip(L.CommandUpdateLabel, L.CommandUpdateTooltip);
     }
 
     private void DrawPresets()
     {
-        if(ImGui.CollapsingHeader("Window size presets", ImGuiTreeNodeFlags.DefaultOpen))
+        if(ImGui.CollapsingHeader(L.WindowSizePresets, ImGuiTreeNodeFlags.DefaultOpen))
         {
-            DrawPresetTableRow("Preset A", _configuration.PresetA);
-            DrawPresetTableRow("Preset B", _configuration.PresetB);
+            DrawPresetTableRow(L.PresetA, _configuration.PresetA);
+            DrawPresetTableRow(L.PresetB, _configuration.PresetB);
         }
     }
 
@@ -128,7 +180,7 @@ public class ConfigWindow : Window
                 }
             }
             if(ImGui.IsItemHovered())
-                ImGui.SetTooltip("Width");
+                ImGui.SetTooltip(L.Width);
 
             ImGui.TableNextColumn();
             ImGui.SetCursorPosX(ImGui.GetCursorPosX() + (ImGui.GetColumnWidth() - ImGui.CalcTextSize("×").X) * 0.5f);
@@ -145,7 +197,7 @@ public class ConfigWindow : Window
                 }
             }
             if(ImGui.IsItemHovered())
-                ImGui.SetTooltip("Height");
+                ImGui.SetTooltip(L.Height);
 
             ImGui.EndTable();
         }
@@ -154,7 +206,7 @@ public class ConfigWindow : Window
     private void DrawPresetCombo(string label, ResolutionSelection selection)
     {
         var matched = ResolutionPresetCatalog.Match(selection.Width, selection.Height);
-        string preview = $"{label} | {(matched?.Label ?? "Custom")}";
+        string preview = $"{label} | {(matched?.Label ?? L.CustomPreset)}";
 
         ImGui.SetNextItemWidth(190);
         if(ImGui.BeginCombo($"##{label}", preview))
@@ -182,17 +234,17 @@ public class ConfigWindow : Window
     {
         using var disabled = ImRaii.Disabled(!_configuration.EnableHotkeys);
 
-        if(ImGui.CollapsingHeader("Hotkeys", ImGuiTreeNodeFlags.DefaultOpen))
+        if(ImGui.CollapsingHeader(L.Hotkeys, ImGuiTreeNodeFlags.DefaultOpen))
         {
             if(ImGui.BeginTable("hotkeys", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
             {
                 ImGui.TableSetupColumn("binding", ImGuiTableColumnFlags.WidthFixed, 220);
                 ImGui.TableSetupColumn("desc", ImGuiTableColumnFlags.WidthStretch);
 
-                DrawHotkeyRow("Set resolution A", _configuration.HotkeyPresetA);
-                DrawHotkeyRow("Set resolution B", _configuration.HotkeyPresetB);
-                DrawHotkeyRow("Reset to startup size", _configuration.HotkeyReset);
-                DrawHotkeyRow("Update to startup size", _configuration.HotkeyUpdate);
+                DrawHotkeyRow(L.HotkeyPresetADesc, _configuration.HotkeyPresetA);
+                DrawHotkeyRow(L.HotkeyPresetBDesc, _configuration.HotkeyPresetB);
+                DrawHotkeyRow(L.HotkeyResetDesc, _configuration.HotkeyReset);
+                DrawHotkeyRow(L.HotkeyUpdateDesc, _configuration.HotkeyUpdate);
 
                 ImGui.EndTable();
             }
@@ -215,11 +267,11 @@ public class ConfigWindow : Window
     {
         if(ImGui.BeginTable($"bind-{id}", 5, ImGuiTableFlags.SizingFixedFit))
         {
-            ImGui.TableSetupColumn("Ctrl");
-            ImGui.TableSetupColumn("Alt");
-            ImGui.TableSetupColumn("Shift");
-            ImGui.TableSetupColumn("Reset");
-            ImGui.TableSetupColumn("Key", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn(L.Ctrl);
+            ImGui.TableSetupColumn(L.Alt);
+            ImGui.TableSetupColumn(L.Shift);
+            ImGui.TableSetupColumn(L.ResetBindingButton);
+            ImGui.TableSetupColumn(L.KeyLabel, ImGuiTableColumnFlags.WidthStretch);
 
             ImGui.TableNextRow();
 
@@ -262,17 +314,17 @@ public class ConfigWindow : Window
             ImGui.TableNextColumn();
             ImGui.AlignTextToFramePadding();
             ImGui.PushID($"reset-{id}");
-            if(ImGui.Button("Reset"))
+            if(ImGui.Button(L.ResetBindingButton))
             {
                 binding.Clear();
                 _saveConfiguration();
             }
             if(ImGui.IsItemHovered())
-                ImGui.SetTooltip("Clear current binding");
+                ImGui.SetTooltip(L.ClearBindingTooltip);
             ImGui.PopID();
 
             ImGui.TableNextColumn();
-            string preview = binding.IsUnset ? "Unset" : binding.Key.ToString();
+            string preview = binding.IsUnset ? L.Unset : binding.Key.ToString();
             ImGui.SetNextItemWidth(-1);
             ImGui.PushID($"key-{id}");
             if(ImGui.BeginCombo("##key", preview))
@@ -315,9 +367,9 @@ public class ConfigWindow : Window
         var current = _getCurrentSize();
         var saved = _getSavedSize();
 
-        ImGui.TextColored(new Vector4(0.7f, 0.8f, 1.0f, 1.0f), "Status");
-        ImGui.Text($"Current window size: {current.Width} x {current.Height}");
-        ImGui.Text($"Startup size: {saved.Width} x {saved.Height}");
+        ImGui.TextColored(new Vector4(0.7f, 0.8f, 1.0f, 1.0f), L.Status);
+        ImGui.Text(string.Format(L.CurrentWindowSize, current.Width, current.Height));
+        ImGui.Text(string.Format(L.StartupSize, saved.Width, saved.Height));
     }
 }
 
