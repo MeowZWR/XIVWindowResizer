@@ -72,21 +72,5 @@ public class HotkeyBinding
         Shift = false;
         Alt = false;
     }
-
-    public string ToDisplayString()
-    {
-        if(IsUnset)
-            return LocalizationManager.Strings.Unset;
-
-        string mods = string.Empty;
-        if(Ctrl)
-            mods += "Ctrl+";
-        if(Shift)
-            mods += "Shift+";
-        if(Alt)
-            mods += "Alt+";
-
-        return $"{mods}{Key}";
-    }
 }
 

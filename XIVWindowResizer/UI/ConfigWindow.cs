@@ -15,13 +15,6 @@ namespace XIVWindowResizer.UI;
 
 public class ConfigWindow : Window
 {
-    private static readonly IReadOnlyList<(string Label, VirtualKey Key)> KeyOptions = Enum
-        .GetValues(typeof(VirtualKey))
-        .Cast<VirtualKey>()
-        .Where(k => k != VirtualKey.SHIFT && k != VirtualKey.CONTROL && k != VirtualKey.MENU && k != 0)
-        .OrderBy(k => k.ToString())
-        .Select(k => (k.ToString(), k))
-        .ToList();
     private static readonly Language[] LanguageOptions = Enum.GetValues(typeof(Language)).Cast<Language>().ToArray();
     private const string WindowId = "XIVWindowResizerConfig";
 

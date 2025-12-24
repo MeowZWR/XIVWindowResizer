@@ -24,8 +24,6 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] private IFramework _framework { get; init; } = null!;
     [PluginService] private IKeyState _keyState { get; init; } = null!;
 
-    private Size _originalWindowSize { get; set; }
-
     private WindowSizeHelper _windowSizeHelper { get; init; }
     private readonly WindowSystem _windowSystem;
     private readonly ConfigWindow _configWindow;
@@ -41,7 +39,6 @@ public sealed class Plugin : IDalamudPlugin
         _configuration = LoadConfiguration();
         LocalizationManager.Initialize(_pluginInterface, _configuration.Language);
         EnsureSavedSize();
-        _originalWindowSize = new Size(_configuration.SavedWidth, _configuration.SavedHeight);
 
         _hotkeyBindings = new List<HotkeyBinding>
         {
@@ -206,7 +203,6 @@ public sealed class Plugin : IDalamudPlugin
             _configuration.SavedHeight = current.Height;
             SaveConfiguration();
 
-            _originalWindowSize = current;
             Notify(string.Format(L.UpdatedSavedSize, current.Width, current.Height));
             return true;
         }
