@@ -45,8 +45,8 @@ public class ConfigWindow : Window
 
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(340, 410),
-            MaximumSize = new Vector2(340, 410)
+            MinimumSize = new Vector2(340, 420),
+            MaximumSize = new Vector2(340, 420)
         };
     }
 
@@ -365,6 +365,8 @@ public class ConfigWindow : Window
         ImGui.SetNextItemWidth(-1);
         ImGui.PushID($"key-{id}");
         ImGui.InputText("##key", ref preview, 32, ImGuiInputTextFlags.ReadOnly | ImGuiInputTextFlags.NoHorizontalScroll);
+        if(ImGui.IsItemHovered())
+            ImGui.SetTooltip(L.HotkeyInputTooltip);
 
         if(ImGui.IsItemActivated())
             _captureState.Clear();

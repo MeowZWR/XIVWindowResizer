@@ -43,6 +43,7 @@ public class LocalizationStrings
     public string Shift { get; set; } = "Shift";
     public string ResetBindingButton { get; set; } = "Reset";
     public string ClearBindingTooltip { get; set; } = "Clear current binding";
+    public string HotkeyInputTooltip { get; set; } = "Click and press a key.";
     public string KeyLabel { get; set; } = "Key";
     public string Unset { get; set; } = "Unset";
     public string Status { get; set; } = "Status";
@@ -93,6 +94,7 @@ public class LocalizationStrings
             Shift = Shift,
             ResetBindingButton = ResetBindingButton,
             ClearBindingTooltip = ClearBindingTooltip,
+            HotkeyInputTooltip = HotkeyInputTooltip,
             KeyLabel = KeyLabel,
             Unset = Unset,
             Status = Status,
@@ -214,6 +216,7 @@ public static class LocalizationManager
         result.Shift = Coalesce(result.Shift, overrides.Shift);
         result.ResetBindingButton = Coalesce(result.ResetBindingButton, overrides.ResetBindingButton);
         result.ClearBindingTooltip = Coalesce(result.ClearBindingTooltip, overrides.ClearBindingTooltip);
+        result.HotkeyInputTooltip = Coalesce(result.HotkeyInputTooltip, overrides.HotkeyInputTooltip);
         result.KeyLabel = Coalesce(result.KeyLabel, overrides.KeyLabel);
         result.Unset = Coalesce(result.Unset, overrides.Unset);
         result.Status = Coalesce(result.Status, overrides.Status);

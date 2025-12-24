@@ -29,6 +29,7 @@
   "Shift": "Shift",
   "ResetBindingButton": "重置",
   "ClearBindingTooltip": "清除当前绑定",
+  "HotkeyInputTooltip": "点击输入框按下要绑定的按键。",
   "KeyLabel": "按键",
   "Unset": "未设置",
   "Status": "状态",

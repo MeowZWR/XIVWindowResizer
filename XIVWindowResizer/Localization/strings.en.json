@@ -29,6 +29,7 @@
   "Shift": "Shift",
   "ResetBindingButton": "Reset",
   "ClearBindingTooltip": "Clear current binding",
+  "HotkeyInputTooltip": "Click and press a key.",
   "KeyLabel": "Key",
   "Unset": "Unset",
   "Status": "Status",
