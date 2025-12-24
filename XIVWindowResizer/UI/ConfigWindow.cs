@@ -17,6 +17,8 @@ public class ConfigWindow : Window
 {
     private static readonly Language[] LanguageOptions = Enum.GetValues(typeof(Language)).Cast<Language>().ToArray();
     private const string WindowId = "XIVWindowResizerConfig";
+    private const float PresetComboWidth = 180f;
+    private const float HotkeyInputWidth = 75f;
 
     private readonly Configuration _configuration;
     private readonly Action _saveConfiguration;
@@ -26,6 +28,8 @@ public class ConfigWindow : Window
     private readonly IKeyState _keyState;
     private readonly Dictionary<VirtualKey, bool> _captureState = new();
     private LocalizationStrings L => LocalizationManager.Strings;
+    private float Scale(float value) => value * ImGui.GetIO().FontGlobalScale;
+    private Vector2 Scale(Vector2 value) => value * ImGui.GetIO().FontGlobalScale;
 
     public ConfigWindow(
         Configuration configuration,
@@ -34,7 +38,7 @@ public class ConfigWindow : Window
         Func<Size> getSavedSize,
         Action<Language> onLanguageChanged,
         IKeyState keyState)
-        : base($"{LocalizationManager.Strings.SettingsTitle}###{WindowId}", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize)
+        : base($"{LocalizationManager.Strings.SettingsTitle}###{WindowId}", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.AlwaysAutoResize)
     {
         _configuration = configuration;
         _saveConfiguration = saveConfiguration;
@@ -42,16 +46,11 @@ public class ConfigWindow : Window
         _getSavedSize = getSavedSize;
         _onLanguageChanged = onLanguageChanged;
         _keyState = keyState;
-
-        SizeConstraints = new WindowSizeConstraints
-        {
-            MinimumSize = new Vector2(340, 420),
-            MaximumSize = new Vector2(340, 420)
-        };
     }
 
     public override void Draw()
     {
+        ApplyLayoutSizing();
         WindowName = $"{L.SettingsTitle}###{WindowId}";
         DrawToggles();
         ImGui.Separator();
@@ -66,43 +65,74 @@ public class ConfigWindow : Window
 
     private void DrawToggles()
     {
-        bool enableHotkeys = _configuration.EnableHotkeys;
-        if(ImGui.Checkbox(L.EnableHotkeys, ref enableHotkeys))
+        float comboWidth = CalculateLanguageComboWidth();
+        float labelWidth = ImGui.CalcTextSize(L.LanguageLabel).X;
+        float langColumnWidth = labelWidth + ImGui.GetStyle().ItemSpacing.X + comboWidth;
+
+        string topTableId = $"toggles-top-{ImGui.GetIO().FontGlobalScale:F3}";
+        if(ImGui.BeginTable(topTableId, 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
         {
-            _configuration.EnableHotkeys = enableHotkeys;
-            _saveConfiguration();
+            ImGui.TableSetupColumn("left", ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn("lang", ImGuiTableColumnFlags.WidthFixed, langColumnWidth);
+
+            ImGui.TableNextRow();
+            ImGui.TableNextColumn();
+            bool enableHotkeys = _configuration.EnableHotkeys;
+            if(ImGui.Checkbox(L.EnableHotkeys, ref enableHotkeys))
+            {
+                _configuration.EnableHotkeys = enableHotkeys;
+                _saveConfiguration();
+            }
+
+            ImGui.TableNextColumn();
+            DrawLanguageCombo(comboWidth);
+            ImGui.EndTable();
         }
 
-        ImGui.SameLine();
-        DrawLanguageCombo();
+        ImGui.Spacing();
 
-        bool showChat = _configuration.ShowChatMessages;
-        if(ImGui.Checkbox(L.ShowChatMessages, ref showChat))
+        string bottomTableId = $"toggles-bottom-{ImGui.GetIO().FontGlobalScale:F3}";
+        if(ImGui.BeginTable(bottomTableId, 1, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
         {
-            _configuration.ShowChatMessages = showChat;
-            _saveConfiguration();
-        }
+            ImGui.TableSetupColumn("single", ImGuiTableColumnFlags.WidthStretch);
 
-        bool passHotkeys = _configuration.PassHotkeysToGame;
-        if(ImGui.Checkbox(L.PassHotkeysToGame, ref passHotkeys))
-        {
-            _configuration.PassHotkeysToGame = passHotkeys;
-            _saveConfiguration();
+            ImGui.TableNextRow();
+            ImGui.TableNextColumn();
+            bool showChat = _configuration.ShowChatMessages;
+            if(DrawWrappedCheckbox(L.ShowChatMessages, ref showChat))
+            {
+                _configuration.ShowChatMessages = showChat;
+                _saveConfiguration();
+            }
+
+            ImGui.TableNextRow();
+            ImGui.TableNextColumn();
+            bool passHotkeys = _configuration.PassHotkeysToGame;
+            if(DrawWrappedCheckbox(L.PassHotkeysToGame, ref passHotkeys))
+            {
+                _configuration.PassHotkeysToGame = passHotkeys;
+                _saveConfiguration();
+            }
+            if(ImGui.IsItemHovered())
+                ImGui.SetTooltip(L.PassHotkeysToGameTooltip);
+
+            ImGui.EndTable();
         }
-        if(ImGui.IsItemHovered())
-            ImGui.SetTooltip(L.PassHotkeysToGameTooltip);
     }
 
-    private void DrawLanguageCombo()
+    private float CalculateLanguageComboWidth()
     {
-        float comboWidth = 140f;
-        float labelWidth = ImGui.CalcTextSize(L.LanguageLabel).X;
-        float totalWidth = labelWidth + ImGui.GetStyle().ItemSpacing.X + comboWidth;
-        float startX = ImGui.GetContentRegionMax().X - totalWidth;
-        float currentLineY = ImGui.GetCursorPosY();
+        float maxLabel = LanguageOptions
+            .Select(option => LocalizationManager.GetLanguageName(option))
+            .Select(text => ImGui.CalcTextSize(text).X)
+            .DefaultIfEmpty(0f)
+            .Max();
+        float padding = Scale(30f);
+        return Math.Max(Scale(140f), maxLabel + padding);
+    }
 
-        ImGui.SetCursorPosX(startX);
-        ImGui.SetCursorPosY(currentLineY);
+    private void DrawLanguageCombo(float comboWidth)
+    {
         ImGui.AlignTextToFramePadding();
         ImGui.TextUnformatted(L.LanguageLabel);
         if(ImGui.IsItemHovered())
@@ -135,14 +165,23 @@ public class ConfigWindow : Window
             ImGui.SetTooltip(L.LanguageTooltip);
     }
 
+    private bool DrawWrappedCheckbox(string label, ref bool value)
+    {
+        float wrapX = ImGui.GetCursorPosX() + ImGui.GetColumnWidth();
+        ImGui.PushTextWrapPos(wrapX);
+        bool changed = ImGui.Checkbox(label, ref value);
+        ImGui.PopTextWrapPos();
+        return changed;
+    }
+
     private void DrawCommandHelp()
     {
         ImGui.TextColored(new Vector4(0.7f, 0.8f, 1.0f, 1.0f), L.CommandOverview);
 
         DrawCommandChip(L.CommandSetLabel, L.CommandSetTooltip);
-        ImGui.SameLine(0, 20f);
+        ImGui.SameLine(0, Scale(20f));
         DrawCommandChip(L.CommandResetLabel, L.CommandResetTooltip);
-        ImGui.SameLine(0, 20f);
+        ImGui.SameLine(0, Scale(20f));
         DrawCommandChip(L.CommandUpdateLabel, L.CommandUpdateTooltip);
     }
 
@@ -161,14 +200,15 @@ public class ConfigWindow : Window
         string heightStr = selection.Height.ToString();
         var widthTextSize = ImGui.CalcTextSize(widthStr);
         var heightTextSize = ImGui.CalcTextSize(heightStr);
-        float widthColumnWidth = Math.Max(50, widthTextSize.X + 8);
-        float heightColumnWidth = Math.Max(50, heightTextSize.X + 8);
+        float widthColumnWidth = Math.Max(Scale(50f), widthTextSize.X + Scale(8f));
+        float heightColumnWidth = Math.Max(Scale(50f), heightTextSize.X + Scale(8f));
 
-        if(ImGui.BeginTable($"table-{label}", 4, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
+        string tableId = $"table-{label}-{ImGui.GetIO().FontGlobalScale:F3}";
+        if(ImGui.BeginTable(tableId, 4, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
         {
-            ImGui.TableSetupColumn("preset", ImGuiTableColumnFlags.WidthFixed, 200);
+            ImGui.TableSetupColumn("preset", ImGuiTableColumnFlags.WidthFixed, Scale(PresetComboWidth));
             ImGui.TableSetupColumn("width", ImGuiTableColumnFlags.WidthFixed, widthColumnWidth);
-            ImGui.TableSetupColumn("multiply", ImGuiTableColumnFlags.WidthFixed | ImGuiTableColumnFlags.NoResize, 20);
+            ImGui.TableSetupColumn("multiply", ImGuiTableColumnFlags.WidthFixed | ImGuiTableColumnFlags.NoResize, Scale(20f));
             ImGui.TableSetupColumn("height", ImGuiTableColumnFlags.WidthFixed, heightColumnWidth);
 
             ImGui.TableNextRow();
@@ -215,7 +255,7 @@ public class ConfigWindow : Window
         var matched = ResolutionPresetCatalog.Match(selection.Width, selection.Height);
         string preview = $"{label} | {(matched?.Label ?? L.CustomPreset)}";
 
-        ImGui.SetNextItemWidth(190);
+        ImGui.SetNextItemWidth(Scale(PresetComboWidth));
         if(ImGui.BeginCombo($"##{label}", preview))
         {
             foreach(var preset in ResolutionPresetCatalog.Presets)
@@ -243,9 +283,11 @@ public class ConfigWindow : Window
 
         if(ImGui.CollapsingHeader(L.Hotkeys, ImGuiTreeNodeFlags.DefaultOpen))
         {
-            if(ImGui.BeginTable("hotkeys", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
+            string hotkeyTableId = $"hotkeys-{ImGui.GetIO().FontGlobalScale:F3}";
+            if(ImGui.BeginTable(hotkeyTableId, 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
             {
-                ImGui.TableSetupColumn("binding", ImGuiTableColumnFlags.WidthFixed, 220);
+                float bindingWidth = CalculateBindingColumnWidth();
+                ImGui.TableSetupColumn("binding", ImGuiTableColumnFlags.WidthFixed, bindingWidth);
                 ImGui.TableSetupColumn("desc", ImGuiTableColumnFlags.WidthStretch);
 
                 DrawHotkeyRow(L.HotkeyPresetADesc, _configuration.HotkeyPresetA);
@@ -267,7 +309,7 @@ public class ConfigWindow : Window
 
         ImGui.TableNextColumn();
         ImGui.AlignTextToFramePadding();
-        ImGui.TextWrapped(description);
+        ImGui.TextUnformatted(description);
     }
 
     private void DrawBindingControls(HotkeyBinding binding, string id)
@@ -278,7 +320,7 @@ public class ConfigWindow : Window
             ImGui.TableSetupColumn(L.Alt);
             ImGui.TableSetupColumn(L.Shift);
             ImGui.TableSetupColumn(L.ResetBindingButton);
-            ImGui.TableSetupColumn(L.KeyLabel, ImGuiTableColumnFlags.WidthStretch);
+            ImGui.TableSetupColumn(L.KeyLabel, ImGuiTableColumnFlags.WidthFixed, Scale(HotkeyInputWidth));
 
             ImGui.TableNextRow();
 
@@ -362,7 +404,7 @@ public class ConfigWindow : Window
     private void DrawHotkeyInput(HotkeyBinding binding, string id)
     {
         string preview = binding.IsUnset ? L.Unset : binding.Key.ToString();
-        ImGui.SetNextItemWidth(-1);
+        ImGui.SetNextItemWidth(Scale(HotkeyInputWidth));
         ImGui.PushID($"key-{id}");
         ImGui.InputText("##key", ref preview, 32, ImGuiInputTextFlags.ReadOnly | ImGuiInputTextFlags.NoHorizontalScroll);
         if(ImGui.IsItemHovered())
@@ -426,6 +468,36 @@ public class ConfigWindow : Window
             or VirtualKey.RMENU
             or VirtualKey.LSHIFT
             or VirtualKey.RSHIFT;
+    }
+
+    private float CalculateBindingColumnWidth()
+    {
+        var style = ImGui.GetStyle();
+        float checkboxWidth = ImGui.GetFrameHeight();
+        float resetButtonWidth = ImGui.CalcTextSize(L.ResetBindingButton).X + style.FramePadding.X * 2f;
+        float inputWidth = Scale(HotkeyInputWidth);
+
+        float perCellPadding = style.CellPadding.X * 2f;
+        float innerTablePadding = perCellPadding * 5;
+        float outerCellPadding = style.CellPadding.X * 2f;
+
+        float total = checkboxWidth * 3
+                     + resetButtonWidth
+                     + inputWidth
+                     + innerTablePadding
+                     + outerCellPadding;
+
+        float minimum = Scale(HotkeyInputWidth + 60f);
+        return Math.Max(total, minimum);
+    }
+
+    private void ApplyLayoutSizing()
+    {
+        SizeConstraints = new WindowSizeConstraints
+        {
+            MinimumSize = new Vector2(0f, 0f),
+            MaximumSize = Scale(new Vector2(700f, float.MaxValue))
+        };
     }
 }
 
