@@ -6,25 +6,29 @@ namespace XIVWindowResizer.Helpers;
 public class WindowSearchHelper
 {
     [DllImport("user32.dll", SetLastError = true)]
-    public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string lclassName, string windowTitle);
+    private static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string lclassName, string? windowTitle);
 
     [DllImport("user32.dll")]
-    public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out int ProcessId);
+    private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out int processId);
 
     [DllImport("user32.dll")]
-    public static extern bool IsWindowVisible(IntPtr hWnd);
+    private static extern bool IsWindowVisible(IntPtr hWnd);
 
     public IntPtr FindWindowHandle()
     {
-        IntPtr handle = IntPtr.Zero;
-        while ((handle = FindWindowEx(IntPtr.Zero, handle, "FFXIVGAME", "FINAL FANTASY XIV")) != IntPtr.Zero)
-        {
-            _ = GetWindowThreadProcessId(handle, out int pid);
+        IntPtr hWnd = IntPtr.Zero;
+        int currentPid = Environment.ProcessId;
 
-            if (pid == Environment.ProcessId && IsWindowVisible(handle))
-                break;
+        while ((hWnd = FindWindowEx(IntPtr.Zero, hWnd, "FFXIVGAME", null)) != IntPtr.Zero)
+        {
+            _ = GetWindowThreadProcessId(hWnd, out int windowPid);
+
+            if (windowPid == currentPid && IsWindowVisible(hWnd))
+            {
+                return hWnd;
+            }
         }
 
-        return handle;
+        return IntPtr.Zero;
     }
 }
