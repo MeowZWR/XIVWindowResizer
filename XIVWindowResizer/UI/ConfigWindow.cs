@@ -16,6 +16,7 @@ namespace XIVWindowResizer.UI;
 public class ConfigWindow : Window
 {
     private static readonly Language[] LanguageOptions = Enum.GetValues(typeof(Language)).Cast<Language>().ToArray();
+    private static readonly AspectRatioSelection[] AspectRatioOptions = Enum.GetValues(typeof(AspectRatioSelection)).Cast<AspectRatioSelection>().ToArray();
     private const string WindowId = "XIVWindowResizerConfig";
     private const float PresetComboWidth = 180f;
     private const float HotkeyInputWidth = 75f;
@@ -200,15 +201,55 @@ public class ConfigWindow : Window
     {
         if(ImGui.CollapsingHeader(L.WindowSizePresets, ImGuiTreeNodeFlags.DefaultOpen))
         {
+            DrawAspectRatioControls();
+            ImGui.Spacing();
             DrawPresetTableRow(L.PresetA, _configuration.PresetA);
             DrawPresetTableRow(L.PresetB, _configuration.PresetB);
         }
     }
 
+    private void DrawAspectRatioControls()
+    {
+        bool lockAspectRatio = _configuration.LockPresetAspectRatio;
+        if(DrawWrappedCheckbox(L.LockPresetAspectRatio, ref lockAspectRatio))
+        {
+            _configuration.LockPresetAspectRatio = lockAspectRatio;
+            _saveConfiguration();
+        }
+        if(ImGui.IsItemHovered())
+            ImGui.SetTooltip(L.LockPresetAspectRatioTooltip);
+
+        ImGui.SameLine();
+        using var disabled = ImRaii.Disabled(!_configuration.LockPresetAspectRatio);
+        ImGui.SetNextItemWidth(-1);
+
+        var aspectRatio = _configuration.PresetAspectRatio;
+        string preview = AspectRatioHelper.GetLabel(aspectRatio);
+        if(ImGui.BeginCombo("##preset-aspect-ratio", preview))
+        {
+            foreach(var option in AspectRatioOptions)
+            {
+                bool selected = aspectRatio == option;
+                if(ImGui.Selectable(AspectRatioHelper.GetLabel(option), selected))
+                {
+                    _configuration.PresetAspectRatio = option;
+                    _saveConfiguration();
+                }
+
+                if(selected)
+                    ImGui.SetItemDefaultFocus();
+            }
+
+            ImGui.EndCombo();
+        }
+        if(ImGui.IsItemHovered())
+            ImGui.SetTooltip(L.PresetAspectRatioTooltip);
+    }
+
     private void DrawPresetTableRow(string label, ResolutionSelection selection)
     {
         string widthStr = selection.Width.ToString();
-        string heightStr = selection.Height.ToString();
+        string heightStr = GetEffectivePresetHeight(selection).ToString();
         var widthTextSize = ImGui.CalcTextSize(widthStr);
         var heightTextSize = ImGui.CalcTextSize(heightStr);
         float widthColumnWidth = Math.Max(Scale(50f), widthTextSize.X + Scale(8f));
@@ -246,16 +287,19 @@ public class ConfigWindow : Window
 
             ImGui.TableNextColumn();
             ImGui.SetNextItemWidth(-1);
-            if(ImGui.InputText($"##height-{label}", ref heightStr, 10, ImGuiInputTextFlags.CharsDecimal))
+            using(var disabled = ImRaii.Disabled(_configuration.LockPresetAspectRatio))
             {
-                if(int.TryParse(heightStr, out int height))
+                if(ImGui.InputText($"##height-{label}", ref heightStr, 10, ImGuiInputTextFlags.CharsDecimal))
                 {
-                    selection.Height = Math.Max(1, height);
-                    _saveConfiguration();
+                    if(int.TryParse(heightStr, out int height))
+                    {
+                        selection.Height = Math.Max(1, height);
+                        _saveConfiguration();
+                    }
                 }
             }
             if(ImGui.IsItemHovered())
-                ImGui.SetTooltip(L.Height);
+                ImGui.SetTooltip(_configuration.LockPresetAspectRatio ? L.HeightLockedByAspectRatio : L.Height);
 
             ImGui.EndTable();
         }
@@ -286,6 +330,13 @@ public class ConfigWindow : Window
 
             ImGui.EndCombo();
         }
+    }
+
+    private int GetEffectivePresetHeight(ResolutionSelection selection)
+    {
+        return _configuration.LockPresetAspectRatio
+            ? AspectRatioHelper.CalculateHeight(selection.Width, _configuration.PresetAspectRatio)
+            : selection.Height;
     }
 
     private void DrawHotkeys()

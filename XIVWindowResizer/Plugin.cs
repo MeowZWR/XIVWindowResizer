@@ -192,7 +192,17 @@ public sealed class Plugin : IDalamudPlugin
 
     private bool ApplyPreset(ResolutionSelection selection)
     {
-        return ApplyWindowSize(selection.Width, selection.Height);
+        var size = GetEffectivePresetSize(selection);
+        return ApplyWindowSize(size.Width, size.Height);
+    }
+
+    private Size GetEffectivePresetSize(ResolutionSelection selection)
+    {
+        if(!_configuration.LockPresetAspectRatio)
+            return new Size(selection.Width, selection.Height);
+
+        int height = AspectRatioHelper.CalculateHeight(selection.Width, _configuration.PresetAspectRatio);
+        return new Size(selection.Width, height);
     }
 
     private bool ResetToSavedSize()

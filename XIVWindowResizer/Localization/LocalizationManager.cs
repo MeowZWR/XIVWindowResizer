@@ -22,6 +22,10 @@ public class LocalizationStrings
     public string PassHotkeysToGameTooltip { get; set; } = "When disabled, hotkeys are consumed by the plugin and not sent to the game.";
     public string ApplyRenderResolutionOnly { get; set; } = "Apply render resolution only";
     public string ApplyRenderResolutionOnlyTooltip { get; set; } = "Only change the game's internal render resolution and leave the actual window size unchanged. This keeps oversized resolutions inside the current window.";
+    public string LockPresetAspectRatio { get; set; } = "Lock preset aspect ratio";
+    public string LockPresetAspectRatioTooltip { get; set; } = "When enabled, preset heights are temporarily adjusted to match the selected aspect ratio.";
+    public string PresetAspectRatio { get; set; } = "Aspect ratio";
+    public string PresetAspectRatioTooltip { get; set; } = "Choose the aspect ratio used to recalculate preset heights.";
     public string CommandOverview { get; set; } = "Command overview";
     public string CommandSetLabel { get; set; } = "/wresize set";
     public string CommandSetTooltip { get; set; } = "Set window size to specified resolution.\nExample: /wresize set 5120 2160";
@@ -34,6 +38,7 @@ public class LocalizationStrings
     public string PresetB { get; set; } = "Preset B";
     public string Width { get; set; } = "Width";
     public string Height { get; set; } = "Height";
+    public string HeightLockedByAspectRatio { get; set; } = "Height is calculated from the selected aspect ratio.";
     public string CustomPreset { get; set; } = "Custom";
     public string Hotkeys { get; set; } = "Hotkeys";
     public string HotkeyPresetADesc { get; set; } = "Set resolution A";
@@ -75,6 +80,10 @@ public class LocalizationStrings
             PassHotkeysToGameTooltip = PassHotkeysToGameTooltip,
             ApplyRenderResolutionOnly = ApplyRenderResolutionOnly,
             ApplyRenderResolutionOnlyTooltip = ApplyRenderResolutionOnlyTooltip,
+            LockPresetAspectRatio = LockPresetAspectRatio,
+            LockPresetAspectRatioTooltip = LockPresetAspectRatioTooltip,
+            PresetAspectRatio = PresetAspectRatio,
+            PresetAspectRatioTooltip = PresetAspectRatioTooltip,
             CommandOverview = CommandOverview,
             CommandSetLabel = CommandSetLabel,
             CommandSetTooltip = CommandSetTooltip,
@@ -87,6 +96,7 @@ public class LocalizationStrings
             PresetB = PresetB,
             Width = Width,
             Height = Height,
+            HeightLockedByAspectRatio = HeightLockedByAspectRatio,
             CustomPreset = CustomPreset,
             Hotkeys = Hotkeys,
             HotkeyPresetADesc = HotkeyPresetADesc,
@@ -199,6 +209,10 @@ public static class LocalizationManager
         result.PassHotkeysToGameTooltip = Coalesce(result.PassHotkeysToGameTooltip, overrides.PassHotkeysToGameTooltip);
         result.ApplyRenderResolutionOnly = Coalesce(result.ApplyRenderResolutionOnly, overrides.ApplyRenderResolutionOnly);
         result.ApplyRenderResolutionOnlyTooltip = Coalesce(result.ApplyRenderResolutionOnlyTooltip, overrides.ApplyRenderResolutionOnlyTooltip);
+        result.LockPresetAspectRatio = Coalesce(result.LockPresetAspectRatio, overrides.LockPresetAspectRatio);
+        result.LockPresetAspectRatioTooltip = Coalesce(result.LockPresetAspectRatioTooltip, overrides.LockPresetAspectRatioTooltip);
+        result.PresetAspectRatio = Coalesce(result.PresetAspectRatio, overrides.PresetAspectRatio);
+        result.PresetAspectRatioTooltip = Coalesce(result.PresetAspectRatioTooltip, overrides.PresetAspectRatioTooltip);
         result.CommandOverview = Coalesce(result.CommandOverview, overrides.CommandOverview);
         result.CommandSetLabel = Coalesce(result.CommandSetLabel, overrides.CommandSetLabel);
         result.CommandSetTooltip = Coalesce(result.CommandSetTooltip, overrides.CommandSetTooltip);
@@ -211,6 +225,7 @@ public static class LocalizationManager
         result.PresetB = Coalesce(result.PresetB, overrides.PresetB);
         result.Width = Coalesce(result.Width, overrides.Width);
         result.Height = Coalesce(result.Height, overrides.Height);
+        result.HeightLockedByAspectRatio = Coalesce(result.HeightLockedByAspectRatio, overrides.HeightLockedByAspectRatio);
         result.CustomPreset = Coalesce(result.CustomPreset, overrides.CustomPreset);
         result.Hotkeys = Coalesce(result.Hotkeys, overrides.Hotkeys);
         result.HotkeyPresetADesc = Coalesce(result.HotkeyPresetADesc, overrides.HotkeyPresetADesc);
