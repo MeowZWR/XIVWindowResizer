@@ -11,7 +11,7 @@ public class Configuration : IPluginConfiguration
 
     public bool EnableHotkeys { get; set; } = true;
     public bool ShowChatMessages { get; set; } = true;
-    public bool PassHotkeysToGame { get; set; } = false;
+    public bool PassHotkeysToGame { get; set; } = true;
     public bool ApplyRenderResolutionOnly { get; set; } = false;
     public bool LockPresetAspectRatio { get; set; } = false;
     public AspectRatioSelection PresetAspectRatio { get; set; } = AspectRatioSelection.Ratio16X9;

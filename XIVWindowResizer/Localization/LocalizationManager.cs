@@ -18,9 +18,9 @@ public class LocalizationStrings
     public string LanguageLabel { get; set; } = "Language";
     public string LanguageTooltip { get; set; } = "Choose display language";
     public string ShowChatMessages { get; set; } = "Show chat message after execution";
-    public string PassHotkeysToGame { get; set; } = "Pass hotkeys to game";
-    public string PassHotkeysToGameTooltip { get; set; } = "When disabled, hotkeys are consumed by the plugin and not sent to the game.";
-    public string ApplyRenderResolutionOnly { get; set; } = "Apply render resolution only";
+    public string PassHotkeysToGame { get; set; } = "Prevent hotkeys from reaching the game";
+    public string PassHotkeysToGameTooltip { get; set; } = "When enabled, hotkeys are consumed by the plugin and not sent to the game.";
+    public string ApplyRenderResolutionOnly { get; set; } = "Keep image inside window";
     public string ApplyRenderResolutionOnlyTooltip { get; set; } = "Only change the game's internal render resolution and leave the actual window size unchanged. This keeps oversized resolutions inside the current window.";
     public string LockPresetAspectRatio { get; set; } = "Lock preset aspect ratio";
     public string LockPresetAspectRatioTooltip { get; set; } = "When enabled, preset heights are temporarily adjusted to match the selected aspect ratio.";

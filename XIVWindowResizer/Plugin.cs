@@ -175,7 +175,7 @@ public sealed class Plugin : IDalamudPlugin
 
         action();
 
-        if(!_configuration.PassHotkeysToGame)
+        if(_configuration.PassHotkeysToGame)
             BlockHotkey(binding);
     }
 
