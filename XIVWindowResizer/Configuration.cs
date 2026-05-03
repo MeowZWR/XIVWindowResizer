@@ -25,6 +25,8 @@ public class Configuration : IPluginConfiguration
     public HotkeyBinding HotkeyReset { get; set; } = new();
     public HotkeyBinding HotkeyUpdate { get; set; } = new();
 
+    public bool HotkeyUpdateRiskAcknowledged { get; set; }
+
     public int SavedWidth { get; set; }
     public int SavedHeight { get; set; }
 }

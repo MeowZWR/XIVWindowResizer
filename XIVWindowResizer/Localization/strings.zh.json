@@ -31,6 +31,8 @@
   "HotkeyPresetBDesc": "应用预设 B",
   "HotkeyResetDesc": "重置到启动尺寸",
   "HotkeyUpdateDesc": "更新为启动尺寸",
+  "HotkeyUpdateRiskAcknowledgeTooltip": "该热键会把当前窗口尺寸写入为已保存的「启动尺寸」，覆盖原记录且无法撤销。仍可用 /wresize set 或预设分辨率恢复为指定尺寸。",
+  "HotkeyUpdateHotkeyBlocked": "「更新为启动尺寸」热键未启用。请打开插件设置，阅读说明并勾选确认后再使用。",
   "Ctrl": "Ctrl",
   "Alt": "Alt",
   "Shift": "Shift",

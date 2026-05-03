@@ -45,6 +45,10 @@ public class LocalizationStrings
     public string HotkeyPresetBDesc { get; set; } = "Set resolution B";
     public string HotkeyResetDesc { get; set; } = "Reset to startup size";
     public string HotkeyUpdateDesc { get; set; } = "Update to startup size";
+    public string HotkeyUpdateRiskAcknowledgeTooltip { get; set; } =
+        "This hotkey overwrites the saved “startup size” with the current window size. The previous value is not kept. You can still set an exact size with /wresize set or presets.";
+    public string HotkeyUpdateHotkeyBlocked { get; set; } =
+        "“Update startup size” hotkey is disabled. Open plugin settings, read the notice, and enable the checkbox to use it.";
     public string Ctrl { get; set; } = "Ctrl";
     public string Alt { get; set; } = "Alt";
     public string Shift { get; set; } = "Shift";
@@ -103,6 +107,8 @@ public class LocalizationStrings
             HotkeyPresetBDesc = HotkeyPresetBDesc,
             HotkeyResetDesc = HotkeyResetDesc,
             HotkeyUpdateDesc = HotkeyUpdateDesc,
+            HotkeyUpdateRiskAcknowledgeTooltip = HotkeyUpdateRiskAcknowledgeTooltip,
+            HotkeyUpdateHotkeyBlocked = HotkeyUpdateHotkeyBlocked,
             Ctrl = Ctrl,
             Alt = Alt,
             Shift = Shift,
@@ -232,6 +238,8 @@ public static class LocalizationManager
         result.HotkeyPresetBDesc = Coalesce(result.HotkeyPresetBDesc, overrides.HotkeyPresetBDesc);
         result.HotkeyResetDesc = Coalesce(result.HotkeyResetDesc, overrides.HotkeyResetDesc);
         result.HotkeyUpdateDesc = Coalesce(result.HotkeyUpdateDesc, overrides.HotkeyUpdateDesc);
+        result.HotkeyUpdateRiskAcknowledgeTooltip = Coalesce(result.HotkeyUpdateRiskAcknowledgeTooltip, overrides.HotkeyUpdateRiskAcknowledgeTooltip);
+        result.HotkeyUpdateHotkeyBlocked = Coalesce(result.HotkeyUpdateHotkeyBlocked, overrides.HotkeyUpdateHotkeyBlocked);
         result.Ctrl = Coalesce(result.Ctrl, overrides.Ctrl);
         result.Alt = Coalesce(result.Alt, overrides.Alt);
         result.Shift = Coalesce(result.Shift, overrides.Shift);

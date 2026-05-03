@@ -31,6 +31,8 @@
   "HotkeyPresetBDesc": "Set resolution B",
   "HotkeyResetDesc": "Reset to startup size",
   "HotkeyUpdateDesc": "Update to startup size",
+  "HotkeyUpdateRiskAcknowledgeTooltip": "This hotkey overwrites the saved “startup size” with the current window size. The previous value is not kept. You can still set an exact size with /wresize set or presets.",
+  "HotkeyUpdateHotkeyBlocked": "“Update startup size” hotkey is disabled. Open plugin settings, read the notice, and enable the checkbox to use it.",
   "Ctrl": "Ctrl",
   "Alt": "Alt",
   "Shift": "Shift",

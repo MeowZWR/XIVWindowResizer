@@ -148,7 +148,7 @@ public sealed class Plugin : IDalamudPlugin
         ProcessHotkey(_configuration.HotkeyPresetA, () => ApplyPreset(_configuration.PresetA));
         ProcessHotkey(_configuration.HotkeyPresetB, () => ApplyPreset(_configuration.PresetB));
         ProcessHotkey(_configuration.HotkeyReset, ResetToSavedSize);
-        ProcessHotkey(_configuration.HotkeyUpdate, UpdateSavedSize);
+        ProcessHotkey(_configuration.HotkeyUpdate, HotkeyUpdateSavedSizeIfAcknowledged);
 
         SyncKeyStates();
     }
@@ -208,6 +208,17 @@ public sealed class Plugin : IDalamudPlugin
     private bool ResetToSavedSize()
     {
         return ApplyWindowSize(_configuration.SavedWidth, _configuration.SavedHeight, L.ResetToSavedSize);
+    }
+
+    private bool HotkeyUpdateSavedSizeIfAcknowledged()
+    {
+        if(!_configuration.HotkeyUpdateRiskAcknowledged)
+        {
+            Notify(L.HotkeyUpdateHotkeyBlocked);
+            return false;
+        }
+
+        return UpdateSavedSize();
     }
 
     private bool UpdateSavedSize()

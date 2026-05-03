@@ -20,6 +20,7 @@ public class ConfigWindow : Window
     private const string WindowId = "XIVWindowResizerConfig";
     private const float PresetComboWidth = 180f;
     private const float HotkeyInputWidth = 75f;
+    private const float ToggleSwitchWidth = 32f;
 
     private readonly Configuration _configuration;
     private readonly Action _saveConfiguration;
@@ -355,23 +356,78 @@ public class ConfigWindow : Window
                 DrawHotkeyRow(L.HotkeyPresetADesc, _configuration.HotkeyPresetA);
                 DrawHotkeyRow(L.HotkeyPresetBDesc, _configuration.HotkeyPresetB);
                 DrawHotkeyRow(L.HotkeyResetDesc, _configuration.HotkeyReset);
-                DrawHotkeyRow(L.HotkeyUpdateDesc, _configuration.HotkeyUpdate);
+                DrawHotkeyUpdateRow();
 
                 ImGui.EndTable();
             }
         }
     }
 
-    private void DrawHotkeyRow(string description, HotkeyBinding binding)
+    private void DrawHotkeyRow(string description, HotkeyBinding binding, bool disableBindingControls = false)
     {
         ImGui.TableNextRow();
 
         ImGui.TableNextColumn();
-        DrawBindingControls(binding, description);
+        using(var _ = ImRaii.Disabled(disableBindingControls))
+            DrawBindingControls(binding, description);
 
         ImGui.TableNextColumn();
         ImGui.AlignTextToFramePadding();
         ImGui.TextUnformatted(description);
+    }
+
+    private void DrawHotkeyUpdateRow()
+    {
+        ImGui.TableNextRow();
+
+        bool updateRiskAck = _configuration.HotkeyUpdateRiskAcknowledged;
+        ImGui.TableNextColumn();
+        using(var _ = ImRaii.Disabled(!updateRiskAck))
+            DrawBindingControls(_configuration.HotkeyUpdate, L.HotkeyUpdateDesc);
+
+        ImGui.TableNextColumn();
+        ImGui.AlignTextToFramePadding();
+        ImGui.TextUnformatted(L.HotkeyUpdateDesc);
+        ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
+        ImGui.AlignTextToFramePadding();
+        ImGui.PushID("hotkey-update-risk");
+        if(DrawToggleSwitch(ref updateRiskAck))
+        {
+            _configuration.HotkeyUpdateRiskAcknowledged = updateRiskAck;
+            _saveConfiguration();
+        }
+
+        if(ImGui.IsItemHovered())
+            ImGui.SetTooltip(L.HotkeyUpdateRiskAcknowledgeTooltip);
+
+        ImGui.PopID();
+    }
+
+    private bool DrawToggleSwitch(ref bool value)
+    {
+        float w = Scale(ToggleSwitchWidth);
+        float h = ImGui.GetFrameHeight();
+        Vector2 pos = ImGui.GetCursorScreenPos();
+        bool clicked = ImGui.InvisibleButton("##toggle", new Vector2(w, h));
+        if(clicked)
+            value = !value;
+
+        float rounding = h * 0.5f;
+        uint trackCol = ImGui.GetColorU32(ImGuiCol.FrameBg);
+
+        var drawList = ImGui.GetWindowDrawList();
+        drawList.AddRectFilled(pos, new Vector2(pos.X + w, pos.Y + h), trackCol, rounding);
+
+        float pad = Math.Max(1.5f, h * 0.16f);
+        float knobRadius = Math.Max(1f, (h - pad * 2f) * 0.5f);
+        float knobCenterX = value ? pos.X + w - pad - knobRadius : pos.X + pad + knobRadius;
+        float knobCenterY = pos.Y + h * 0.5f;
+        uint knobCol = value
+            ? ImGui.GetColorU32(ImGuiCol.CheckMark)
+            : ImGui.GetColorU32(ImGuiCol.TextDisabled);
+        drawList.AddCircleFilled(new Vector2(knobCenterX, knobCenterY), knobRadius, knobCol);
+
+        return clicked;
     }
 
     private void DrawBindingControls(HotkeyBinding binding, string id)
