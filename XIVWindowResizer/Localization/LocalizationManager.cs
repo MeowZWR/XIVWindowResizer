@@ -13,7 +13,7 @@ public enum Language
 
 public class LocalizationStrings
 {
-    public string SettingsTitle { get; set; } = "XIVWindowResizer Settings";
+    public string SettingsTitle { get; set; } = "XIVWindowResizerX Settings";
     public string EnableHotkeys { get; set; } = "Enable hotkeys";
     public string LanguageLabel { get; set; } = "Language";
     public string LanguageTooltip { get; set; } = "Choose display language";
@@ -27,11 +27,11 @@ public class LocalizationStrings
     public string PresetAspectRatio { get; set; } = "Aspect ratio";
     public string PresetAspectRatioTooltip { get; set; } = "Choose the aspect ratio used to recalculate preset heights.";
     public string CommandOverview { get; set; } = "Command overview";
-    public string CommandSetLabel { get; set; } = "/wresize set";
-    public string CommandSetTooltip { get; set; } = "Set window size to specified resolution.\nExample: /wresize set 5120 2160";
-    public string CommandResetLabel { get; set; } = "/wresize reset";
+    public string CommandSetLabel { get; set; } = "/wresizex set";
+    public string CommandSetTooltip { get; set; } = "Set window size to specified resolution.\nExample: /wresizex set 5120 2160";
+    public string CommandResetLabel { get; set; } = "/wresizex reset";
     public string CommandResetTooltip { get; set; } = "Reset window size to startup size.\nThe size saved by the plugin when it was loaded or the last time the update command was used.";
-    public string CommandUpdateLabel { get; set; } = "/wresize update";
+    public string CommandUpdateLabel { get; set; } = "/wresizex update";
     public string CommandUpdateTooltip { get; set; } = "Record current window size as new startup size.\nUse this command with caution.";
     public string WindowSizePresets { get; set; } = "Window size presets";
     public string PresetA { get; set; } = "Preset A";
@@ -46,7 +46,7 @@ public class LocalizationStrings
     public string HotkeyResetDesc { get; set; } = "Reset to startup size";
     public string HotkeyUpdateDesc { get; set; } = "Update to startup size";
     public string HotkeyUpdateRiskAcknowledgeTooltip { get; set; } =
-        "This hotkey overwrites the saved “startup size” with the current window size. The previous value is not kept. You can still set an exact size with /wresize set or presets.";
+        "This hotkey overwrites the saved “startup size” with the current window size. The previous value is not kept. You can still set an exact size with /wresizex set or presets.";
     public string HotkeyUpdateHotkeyBlocked { get; set; } =
         "“Update startup size” hotkey is disabled. Open plugin settings, read the notice, and enable the checkbox to use it.";
     public string Ctrl { get; set; } = "Ctrl";
@@ -61,7 +61,7 @@ public class LocalizationStrings
     public string CurrentWindowSize { get; set; } = "Current window size: {0} x {1}";
     public string StartupSize { get; set; } = "Startup size: {0} x {1}";
     public string UnknownCommand { get; set; } = "Unknown command: {0}";
-    public string UsageSet { get; set; } = "Usage: /wresize set <width> <height>";
+    public string UsageSet { get; set; } = "Usage: /wresizex set <width> <height>";
     public string InvalidWidthHeight { get; set; } = "Invalid width or height";
     public string ResetToSavedSize { get; set; } = "Window size is reset to the saved startup size.";
     public string UpdatedSavedSize { get; set; } = "Updated saved window size to {0}x{1}";
@@ -69,7 +69,7 @@ public class LocalizationStrings
     public string SetWindowSizeSuccess { get; set; } = "Window size is set to {0}x{1}";
     public string SetWindowSizeFailed { get; set; } = "Unable to set window size: {0}";
     public string HelpMessage { get; set; } =
-        "Open config window.\r\nUsage:\r\n/wresize set <width> <height> - Set window size.\r\n/wresize reset - Reset window size back to the original size.\r\n/wresize update - Update window size used by /wresize reset command. Use if you have changed game's screen resolution without restarting the game or reloading the plugin.";
+        "Open config window.\r\nUsage:\r\n/wresizex set <width> <height> - Set window size.\r\n/wresizex reset - Reset window size back to the original size.\r\n/wresizex update - Update window size used by /wresizex reset command. Use if you have changed game's screen resolution without restarting the game or reloading the plugin.";
 
     public LocalizationStrings Clone()
     {

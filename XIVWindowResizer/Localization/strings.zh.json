@@ -1,5 +1,5 @@
 {
-  "SettingsTitle": "XIVWindowResizer 设置",
+  "SettingsTitle": "XIVWindowResizerX 设置",
   "EnableHotkeys": "启用快捷键",
   "LanguageLabel": "语言",
   "LanguageTooltip": "选择显示语言",
@@ -13,11 +13,11 @@
   "PresetAspectRatio": "屏幕比例",
   "PresetAspectRatioTooltip": "选择用于重算预设高度的屏幕比例。",
   "CommandOverview": "指令概览",
-  "CommandSetLabel": "/wresize set",
-  "CommandSetTooltip": "将窗口调整到指定分辨率。\n示例：/wresize set 5120 2160",
-  "CommandResetLabel": "/wresize reset",
+  "CommandSetLabel": "/wresizex set",
+  "CommandSetTooltip": "将窗口调整到指定分辨率。\n示例：/wresizex set 5120 2160",
+  "CommandResetLabel": "/wresizex reset",
   "CommandResetTooltip": "重置窗口为启动尺寸。\n插件加载时或上次使用 update 命令时保存的尺寸。",
-  "CommandUpdateLabel": "/wresize update",
+  "CommandUpdateLabel": "/wresizex update",
   "CommandUpdateTooltip": "记录当前窗口尺寸为新的启动尺寸。\n谨慎使用。",
   "WindowSizePresets": "窗口大小预设",
   "PresetA": "预设 A",
@@ -31,7 +31,7 @@
   "HotkeyPresetBDesc": "应用预设 B",
   "HotkeyResetDesc": "重置到启动尺寸",
   "HotkeyUpdateDesc": "更新为启动尺寸",
-  "HotkeyUpdateRiskAcknowledgeTooltip": "该热键会把当前窗口尺寸写入为已保存的「启动尺寸」，覆盖原记录且无法撤销。仍可用 /wresize set 或预设分辨率恢复为指定尺寸。",
+  "HotkeyUpdateRiskAcknowledgeTooltip": "该热键会把当前窗口尺寸写入为已保存的「启动尺寸」，覆盖原记录且无法撤销。仍可用 /wresizex set 或预设分辨率恢复为指定尺寸。",
   "HotkeyUpdateHotkeyBlocked": "「更新为启动尺寸」热键未启用。请打开插件设置，阅读说明并勾选确认后再使用。",
   "Ctrl": "Ctrl",
   "Alt": "Alt",
@@ -45,13 +45,13 @@
   "CurrentWindowSize": "当前窗口尺寸：{0} x {1}",
   "StartupSize": "启动尺寸：{0} x {1}",
   "UnknownCommand": "未知命令：{0}",
-  "UsageSet": "用法：/wresize set <width> <height>",
+  "UsageSet": "用法：/wresizex set <width> <height>",
   "InvalidWidthHeight": "无效的宽或高",
   "ResetToSavedSize": "窗口尺寸已重置为启动时的尺寸。",
   "UpdatedSavedSize": "已将保存的窗口尺寸更新为 {0}x{1}",
   "UpdateFailed": "无法更新窗口尺寸：{0}",
   "SetWindowSizeSuccess": "窗口尺寸已设置为 {0}x{1}",
   "SetWindowSizeFailed": "无法设置窗口尺寸：{0}",
-  "HelpMessage": "打开设置界面。\r\n用法：\r\n/wresize set <width> <height> - 设置窗口尺寸。\r\n/wresize reset - 重置窗口尺寸到初始大小。\r\n/wresize update - 更新 /wresize reset 使用的窗口尺寸，适用于在未重启游戏或重载插件的情况下更改分辨率。"
+  "HelpMessage": "打开设置界面。\r\n用法：\r\n/wresizex set <width> <height> - 设置窗口尺寸。\r\n/wresizex reset - 重置窗口尺寸到初始大小。\r\n/wresizex update - 更新 /wresizex reset 使用的窗口尺寸，适用于在未重启游戏或重载插件的情况下更改分辨率。"
 }
 

@@ -15,8 +15,8 @@ namespace XIVWindowResizer;
 
 public sealed class Plugin : IDalamudPlugin
 {
-    public string Name => "XIVWindowResizer";
-    private const string CommandName = "/wresize";
+    public string Name => "XIVWindowResizerX";
+    private const string CommandName = "/wresizex";
 
     [PluginService] private ICommandManager _commandManager { get; init; } = null!;
     [PluginService] private IChatGui _chatGui { get; init; } = null!;

@@ -1,0 +1,12 @@
+{
+    "Author": "AlexCSDev",
+    "Name": "XIVWindowResizerX",
+    "Punchline": "游戏窗口分辨率调节插件。想在 144p 屏幕上截 8K 图？现在可以了。",
+    "Description": "将游戏窗口设为任意尺寸，不再受显示器物理分辨率限制。适合在不全屏、不开 DSR/FSR 的情况下截取超高分辨率截图。\r\n需要无边框或窗口化模式。",
+    "ApplicableVersion": "any",
+    "Tags": [
+        "gpose",
+        "posing",
+        "utility"
+    ]
+}

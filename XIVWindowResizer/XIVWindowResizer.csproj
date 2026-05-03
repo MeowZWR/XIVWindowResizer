@@ -2,6 +2,8 @@
 
 <Project Sdk="Dalamud.NET.Sdk/15.0.0">
     <PropertyGroup>
+        <AssemblyName>XIVWindowResizerX</AssemblyName>
+        <RootNamespace>XIVWindowResizer</RootNamespace>
         <Authors>AlexCSDev</Authors>
         <Company></Company>
         <Version>1.0.0.8</Version>

@@ -1,5 +1,5 @@
 {
-  "SettingsTitle": "XIVWindowResizer Settings",
+  "SettingsTitle": "XIVWindowResizerX Settings",
   "EnableHotkeys": "Enable hotkeys",
   "LanguageLabel": "Language",
   "LanguageTooltip": "Choose display language",
@@ -13,11 +13,11 @@
   "PresetAspectRatio": "Aspect ratio",
   "PresetAspectRatioTooltip": "Choose the aspect ratio used to recalculate preset heights.",
   "CommandOverview": "Command overview",
-  "CommandSetLabel": "/wresize set",
-  "CommandSetTooltip": "Set window size to specified resolution.\nExample: /wresize set 5120 2160",
-  "CommandResetLabel": "/wresize reset",
+  "CommandSetLabel": "/wresizex set",
+  "CommandSetTooltip": "Set window size to specified resolution.\nExample: /wresizex set 5120 2160",
+  "CommandResetLabel": "/wresizex reset",
   "CommandResetTooltip": "Reset window size to startup size.\nThe size saved by the plugin when it was loaded or the last time the update command was used.",
-  "CommandUpdateLabel": "/wresize update",
+  "CommandUpdateLabel": "/wresizex update",
   "CommandUpdateTooltip": "Record current window size as new startup size.\nUse this command with caution.",
   "WindowSizePresets": "Window size presets",
   "PresetA": "Preset A",
@@ -31,7 +31,7 @@
   "HotkeyPresetBDesc": "Set resolution B",
   "HotkeyResetDesc": "Reset to startup size",
   "HotkeyUpdateDesc": "Update to startup size",
-  "HotkeyUpdateRiskAcknowledgeTooltip": "This hotkey overwrites the saved “startup size” with the current window size. The previous value is not kept. You can still set an exact size with /wresize set or presets.",
+  "HotkeyUpdateRiskAcknowledgeTooltip": "This hotkey overwrites the saved “startup size” with the current window size. The previous value is not kept. You can still set an exact size with /wresizex set or presets.",
   "HotkeyUpdateHotkeyBlocked": "“Update startup size” hotkey is disabled. Open plugin settings, read the notice, and enable the checkbox to use it.",
   "Ctrl": "Ctrl",
   "Alt": "Alt",
@@ -45,13 +45,13 @@
   "CurrentWindowSize": "Current window size: {0} x {1}",
   "StartupSize": "Startup size: {0} x {1}",
   "UnknownCommand": "Unknown command: {0}",
-  "UsageSet": "Usage: /wresize set <width> <height>",
+  "UsageSet": "Usage: /wresizex set <width> <height>",
   "InvalidWidthHeight": "Invalid width or height",
   "ResetToSavedSize": "Window size is reset to the saved startup size.",
   "UpdatedSavedSize": "Updated saved window size to {0}x{1}",
   "UpdateFailed": "Unable to update window size: {0}",
   "SetWindowSizeSuccess": "Window size is set to {0}x{1}",
   "SetWindowSizeFailed": "Unable to set window size: {0}",
-  "HelpMessage": "Open config window.\r\nUsage:\r\n/wresize set <width> <height> - Set window size.\r\n/wresize reset - Reset window size back to the original size.\r\n/wresize update - Update window size used by /wresize reset command. Use if you have changed game's screen resolution without restarting the game or reloading the plugin."
+  "HelpMessage": "Open config window.\r\nUsage:\r\n/wresizex set <width> <height> - Set window size.\r\n/wresizex reset - Reset window size back to the original size.\r\n/wresizex update - Update window size used by /wresizex reset command. Use if you have changed game's screen resolution without restarting the game or reloading the plugin."
 }
 
