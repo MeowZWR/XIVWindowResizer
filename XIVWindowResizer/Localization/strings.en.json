@@ -6,6 +6,8 @@
   "ShowChatMessages": "Show chat message after execution",
   "PassHotkeysToGame": "Pass hotkeys to game",
   "PassHotkeysToGameTooltip": "When disabled, hotkeys are consumed by the plugin and not sent to the game.",
+  "ApplyRenderResolutionOnly": "Apply render resolution only",
+  "ApplyRenderResolutionOnlyTooltip": "Only change the game's internal render resolution and leave the actual window size unchanged. This keeps oversized resolutions inside the current window.",
   "CommandOverview": "Command overview",
   "CommandSetLabel": "/wresize set",
   "CommandSetTooltip": "Set window size to specified resolution.\nExample: /wresize set 5120 2160",

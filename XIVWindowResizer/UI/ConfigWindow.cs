@@ -116,6 +116,17 @@ public class ConfigWindow : Window
             if(ImGui.IsItemHovered())
                 ImGui.SetTooltip(L.PassHotkeysToGameTooltip);
 
+            ImGui.TableNextRow();
+            ImGui.TableNextColumn();
+            bool applyRenderResolutionOnly = _configuration.ApplyRenderResolutionOnly;
+            if(DrawWrappedCheckbox(L.ApplyRenderResolutionOnly, ref applyRenderResolutionOnly))
+            {
+                _configuration.ApplyRenderResolutionOnly = applyRenderResolutionOnly;
+                _saveConfiguration();
+            }
+            if(ImGui.IsItemHovered())
+                ImGui.SetTooltip(L.ApplyRenderResolutionOnlyTooltip);
+
             ImGui.EndTable();
         }
     }

@@ -20,6 +20,8 @@ public class LocalizationStrings
     public string ShowChatMessages { get; set; } = "Show chat message after execution";
     public string PassHotkeysToGame { get; set; } = "Pass hotkeys to game";
     public string PassHotkeysToGameTooltip { get; set; } = "When disabled, hotkeys are consumed by the plugin and not sent to the game.";
+    public string ApplyRenderResolutionOnly { get; set; } = "Apply render resolution only";
+    public string ApplyRenderResolutionOnlyTooltip { get; set; } = "Only change the game's internal render resolution and leave the actual window size unchanged. This keeps oversized resolutions inside the current window.";
     public string CommandOverview { get; set; } = "Command overview";
     public string CommandSetLabel { get; set; } = "/wresize set";
     public string CommandSetTooltip { get; set; } = "Set window size to specified resolution.\nExample: /wresize set 5120 2160";
@@ -71,6 +73,8 @@ public class LocalizationStrings
             ShowChatMessages = ShowChatMessages,
             PassHotkeysToGame = PassHotkeysToGame,
             PassHotkeysToGameTooltip = PassHotkeysToGameTooltip,
+            ApplyRenderResolutionOnly = ApplyRenderResolutionOnly,
+            ApplyRenderResolutionOnlyTooltip = ApplyRenderResolutionOnlyTooltip,
             CommandOverview = CommandOverview,
             CommandSetLabel = CommandSetLabel,
             CommandSetTooltip = CommandSetTooltip,
@@ -193,6 +197,8 @@ public static class LocalizationManager
         result.ShowChatMessages = Coalesce(result.ShowChatMessages, overrides.ShowChatMessages);
         result.PassHotkeysToGame = Coalesce(result.PassHotkeysToGame, overrides.PassHotkeysToGame);
         result.PassHotkeysToGameTooltip = Coalesce(result.PassHotkeysToGameTooltip, overrides.PassHotkeysToGameTooltip);
+        result.ApplyRenderResolutionOnly = Coalesce(result.ApplyRenderResolutionOnly, overrides.ApplyRenderResolutionOnly);
+        result.ApplyRenderResolutionOnlyTooltip = Coalesce(result.ApplyRenderResolutionOnlyTooltip, overrides.ApplyRenderResolutionOnlyTooltip);
         result.CommandOverview = Coalesce(result.CommandOverview, overrides.CommandOverview);
         result.CommandSetLabel = Coalesce(result.CommandSetLabel, overrides.CommandSetLabel);
         result.CommandSetTooltip = Coalesce(result.CommandSetTooltip, overrides.CommandSetTooltip);

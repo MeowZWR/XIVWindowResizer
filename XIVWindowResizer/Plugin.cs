@@ -25,6 +25,7 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] private IKeyState _keyState { get; init; } = null!;
 
     private WindowSizeHelper _windowSizeHelper { get; init; }
+    private RenderResolutionHelper _renderResolutionHelper { get; init; }
     private readonly WindowSystem _windowSystem;
     private readonly ConfigWindow _configWindow;
     private readonly CommandInfo _commandInfo;
@@ -35,7 +36,9 @@ public sealed class Plugin : IDalamudPlugin
 
     public Plugin()
     {
-        _windowSizeHelper = new WindowSizeHelper(new WindowSearchHelper());
+        var windowSearchHelper = new WindowSearchHelper();
+        _windowSizeHelper = new WindowSizeHelper(windowSearchHelper);
+        _renderResolutionHelper = new RenderResolutionHelper();
         _configuration = LoadConfiguration();
         LocalizationManager.Initialize(_pluginInterface, _configuration.Language);
         EnsureSavedSize();
@@ -226,7 +229,11 @@ public sealed class Plugin : IDalamudPlugin
 
         try
         {
-            _windowSizeHelper.SetWindowSize(width, height);
+            if(_configuration.ApplyRenderResolutionOnly)
+                _renderResolutionHelper.SetRenderResolution(width, height);
+            else
+                _windowSizeHelper.SetWindowSize(width, height);
+
             Notify(successMessage ?? string.Format(L.SetWindowSizeSuccess, width, height));
             return true;
         }

@@ -6,6 +6,8 @@
   "ShowChatMessages": "执行后显示聊天消息",
   "PassHotkeysToGame": "快捷键传递给游戏",
   "PassHotkeysToGameTooltip": "关闭后，快捷键将被插件拦截，不会传递给游戏本体。",
+  "ApplyRenderResolutionOnly": "仅调整渲染分辨率",
+  "ApplyRenderResolutionOnlyTooltip": "只修改游戏内部渲染分辨率，不改变真实窗口大小。分辨率大于显示器时，画面仍会限制在当前窗口内。",
   "CommandOverview": "指令概览",
   "CommandSetLabel": "/wresize set",
   "CommandSetTooltip": "将窗口调整到指定分辨率。\n示例：/wresize set 5120 2160",

@@ -12,6 +12,7 @@ public class Configuration : IPluginConfiguration
     public bool EnableHotkeys { get; set; } = true;
     public bool ShowChatMessages { get; set; } = true;
     public bool PassHotkeysToGame { get; set; } = false;
+    public bool ApplyRenderResolutionOnly { get; set; } = false;
     public Language Language { get; set; } = Language.English;
 
     public ResolutionSelection PresetA { get; set; } = ResolutionSelection.Default4K();
