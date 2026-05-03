@@ -1,0 +1,31 @@
+[
+  {
+    "Author": "AlexCSDev",
+    "Name": "XIVWindowResizerX",
+    "Punchline": "游戏窗口分辨率调节插件。想在 144p 屏幕上截 8K 图？现在可以了。",
+    "Description": "将游戏窗口设为任意尺寸，不再受显示器物理分辨率限制。适合在不全屏、不开 DSR/FSR 的情况下截取超高分辨率截图。\n需要无边框或窗口化模式。",
+    "Tags": [
+      "gpose",
+      "posing",
+      "utility",
+      "screenshot",
+      "resolution",
+      "window"
+    ],
+    "InternalName": "XIVWindowResizerX",
+    "AssemblyVersion": "1.0.0.8",
+    "TestingAssemblyVersion": "1.0.0.8",
+    "RepoUrl": "https://github.com/MeowZWR/XIVWindowResizer",
+    "ApplicableVersion": "any",
+    "DalamudApiLevel": 15,
+    "TestingDalamudApiLevel": 15,
+    "IsHide": "False",
+    "IsTestingExclusive": "False",
+    "DownloadCount": 1,
+    "LastUpdate": 1746230400,
+    "DownloadLinkInstall": "https://meowrs.com/https://github.com/MeowZWR/XIVWindowResizer/releases/download/1.0.0.8-x/XIVWindowResizerX.zip",
+    "DownloadLinkUpdate": "https://meowrs.com/https://github.com/MeowZWR/XIVWindowResizer/releases/download/1.0.0.8-x/XIVWindowResizerX.zip",
+    "DownloadLinkTesting": "https://meowrs.com/https://github.com/MeowZWR/XIVWindowResizer/releases/download/1.0.0.8-x/XIVWindowResizerX.zip",
+    "IconUrl": "https://static.meowrs.com/Plugins/XIVWindowResizerX/icon.png"
+  }
+]
