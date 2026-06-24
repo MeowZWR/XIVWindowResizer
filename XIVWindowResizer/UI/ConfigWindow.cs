@@ -18,7 +18,10 @@ public class ConfigWindow : Window
     private static readonly Language[] LanguageOptions = Enum.GetValues(typeof(Language)).Cast<Language>().ToArray();
     private static readonly AspectRatioSelection[] AspectRatioOptions = Enum.GetValues(typeof(AspectRatioSelection)).Cast<AspectRatioSelection>().ToArray();
     private const string WindowId = "XIVWindowResizerConfig";
-    private const float PresetComboWidth = 180f;
+    private const float PresetPopupMinWidth = 200f;
+    private const float PresetPopupPad = 10f;
+    private const float PresetPopupColumnGap = 12f;
+    private const float PresetPopupAspectWidth = 40f;
     private const float HotkeyInputWidth = 75f;
     private const float ToggleSwitchWidth = 32f;
 
@@ -257,9 +260,9 @@ public class ConfigWindow : Window
         float heightColumnWidth = Math.Max(Scale(50f), heightTextSize.X + Scale(8f));
 
         string tableId = $"table-{label}-{ImGui.GetIO().FontGlobalScale:F3}";
-        if(ImGui.BeginTable(tableId, 4, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg))
+        if(ImGui.BeginTable(tableId, 4, ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.RowBg))
         {
-            ImGui.TableSetupColumn("preset", ImGuiTableColumnFlags.WidthFixed, Scale(PresetComboWidth));
+            ImGui.TableSetupColumn("preset", ImGuiTableColumnFlags.WidthStretch);
             ImGui.TableSetupColumn("width", ImGuiTableColumnFlags.WidthFixed, widthColumnWidth);
             ImGui.TableSetupColumn("multiply", ImGuiTableColumnFlags.WidthFixed | ImGuiTableColumnFlags.NoResize, Scale(20f));
             ImGui.TableSetupColumn("height", ImGuiTableColumnFlags.WidthFixed, heightColumnWidth);
@@ -308,29 +311,69 @@ public class ConfigWindow : Window
 
     private void DrawPresetCombo(string label, ResolutionSelection selection)
     {
+        string preview = $"{label} · {ResolutionPresetCatalog.FormatResolution(selection.Width, selection.Height)}";
+
+        float comboWidth = Math.Max(Scale(PresetPopupMinWidth), ImGui.GetContentRegionAvail().X);
+        ImGui.SetNextItemWidth(comboWidth);
+        ImGui.SetNextWindowSizeConstraints(
+            new Vector2(comboWidth, 0),
+            new Vector2(comboWidth, float.MaxValue));
+        if(!ImGui.BeginCombo($"##{label}", preview))
+            return;
+
         var matched = ResolutionPresetCatalog.Match(selection.Width, selection.Height);
-        string preview = $"{label} | {(matched?.Label ?? L.CustomPreset)}";
+        var drawList = ImGui.GetWindowDrawList();
+        float popupLeft = ImGui.GetWindowPos().X + ImGui.GetWindowContentRegionMin().X;
+        float popupRight = ImGui.GetWindowPos().X + ImGui.GetWindowContentRegionMax().X;
 
-        ImGui.SetNextItemWidth(Scale(PresetComboWidth));
-        if(ImGui.BeginCombo($"##{label}", preview))
+        float nameColumnWidth = ResolutionPresetCatalog.Presets
+            .Select(preset => ImGui.CalcTextSize(preset.Name).X)
+            .DefaultIfEmpty(0f)
+            .Max();
+
+        float nameX = popupLeft + Scale(PresetPopupPad);
+        float resolutionX = nameX + nameColumnWidth + Scale(PresetPopupColumnGap);
+        float aspectX = popupRight - Scale(PresetPopupAspectWidth);
+        uint nameColor = ImGui.GetColorU32(ImGuiCol.TextDisabled);
+        uint textColor = ImGui.GetColorU32(ImGuiCol.Text);
+        uint aspectColor = ImGui.GetColorU32(ImGuiCol.TextDisabled);
+
+        string? previousAspect = null;
+        foreach(var preset in ResolutionPresetCatalog.Presets)
         {
-            foreach(var preset in ResolutionPresetCatalog.Presets)
+            if(preset.AspectRatio != previousAspect)
             {
-                bool selected = matched != null && matched.Id == preset.Id;
-                if(ImGui.Selectable(preset.Label, selected))
-                {
-                    selection.Width = preset.Width;
-                    selection.Height = preset.Height;
-                    _saveConfiguration();
-                    matched = preset;
-                }
-
-                if(selected)
-                    ImGui.SetItemDefaultFocus();
+                if(previousAspect != null)
+                    ImGui.Separator();
+                previousAspect = preset.AspectRatio;
             }
 
-            ImGui.EndCombo();
+            ImGui.PushID(preset.Id);
+            bool selected = matched != null && matched.Id == preset.Id;
+            if(ImGui.Selectable("##preset", selected, ImGuiSelectableFlags.SpanAllColumns))
+            {
+                selection.Width = preset.Width;
+                selection.Height = preset.Height;
+                _saveConfiguration();
+            }
+
+            if(ImGui.IsItemVisible())
+            {
+                var itemMin = ImGui.GetItemRectMin();
+                var itemSize = ImGui.GetItemRectSize();
+                float textY = itemMin.Y + (itemSize.Y - ImGui.GetTextLineHeight()) * 0.5f;
+                drawList.AddText(new Vector2(nameX, textY), nameColor, preset.Name);
+                drawList.AddText(new Vector2(resolutionX, textY), textColor, preset.ResolutionLabel);
+                drawList.AddText(new Vector2(aspectX, textY), aspectColor, preset.AspectRatio);
+            }
+
+            if(selected)
+                ImGui.SetItemDefaultFocus();
+
+            ImGui.PopID();
         }
+
+        ImGui.EndCombo();
     }
 
     private int GetEffectivePresetHeight(ResolutionSelection selection)
